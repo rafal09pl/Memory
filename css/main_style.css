@@ -1,6 +1,6 @@
 body {
     background-color: white;
-    font-family: 'Fjalla One', sans-serif;
+    font-family: 'Oswald', sans-serif;
 }
 
 #main-container {
@@ -17,8 +17,7 @@ body {
     margin-left: 0px;
     margin-right: auto;
     float: left;
-    border-right-style: solid;
-    border-right-width: 2px;
+
 }
 
 #logo {
@@ -45,8 +44,12 @@ body {
     margin-left: 20px;
 }
 
+.button:hover {
+    cursor: pointer;
+}
+
 #menu-container {
-    padding: 20px;
+    padding-top: 20px;
     margin-right: auto;
     margin-left: auto;
     text-align: center;
@@ -65,6 +68,8 @@ body {
     height: 900px;
     width: 1500px;
     float: left;
+    border-left-style: solid;
+    border-left-width: 2px;
 }
 
 hr {
@@ -77,21 +82,41 @@ hr {
 }
 
 .card {
-    margin: 12px
+    margin: 12px;
+    font-size: 80px;
 }
 
 .imagePlace {
     padding: 0px;
 }
 
+.imagePlace:hover {
+    cursor: pointer;
+}
+
 .imagePlaceHolder {
-    font-size: 80px;
-    padding: 0px;
     text-align: center;
     border-style: solid;
     border-width: 2px;
+    white-space: nowrap;
 }
 
-#template {
-    color: darkolivegreen;
+.imagePlaceHolder:hover {
+    cursor: pointer;
+}
+
+#won {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+#wynik {
+    color: chartreuse;
+}
+
+#regame:hover {
+    cursor: pointer;
+    color: chartreuse;
 }

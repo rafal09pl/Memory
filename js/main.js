@@ -3,8 +3,11 @@
  */
 
 const picturesNumber = 26;
-const gameWidth = 1500;
-const gameHeight = 900;
+var totalWidth;
+var totalHeight;
+var records;
+var columns;
+var banerWidth;
 
 var firstShowed = "";
 var secondShowed = "";
@@ -60,6 +63,87 @@ function placePictures(chosen, records, columns) {
 
 }
 
+function boxesResize() {
+    if (0.6 * $(window).width() - $(window).height() > 200) {
+        totalHeight = $(window).height() - 20;
+        totalWidth = 10 / 6 * totalHeight;
+    } else {
+        totalWidth = 0.8 * $(window).width() - 20;
+        totalHeight = 0.6 * totalWidth;
+    }
+
+    banerWidth = $(window).width() - 50 - totalWidth;
+    $("#baner").css("width", banerWidth);
+
+    $("#game").css("width", totalWidth);
+    $("#game").css("height", totalHeight);
+    $("#logo").css("width", 5/6 * banerWidth);
+    $("#logo").css("height", 5/6 * banerWidth);
+    $("#title").css("font-size", banerWidth/300 * 50);
+}
+
+function resizeGame() {
+    boxesResize();
+
+    let imgWidth = totalWidth / columns - 24;
+    let imgHeight = totalHeight / records - 24;
+
+    $(".card").each(function () {
+        $(this).css("width", imgWidth);
+        $(this).css("height", imgHeight);
+
+        $(this).children(".imagePlace").children().css("width", imgWidth);
+        $(this).children(".imagePlace").children().css("height", imgHeight);
+
+        $(this).css("fontSize", Math.floor(0.6 * imgHeight));
+    })
+}
+
+function generateGame(picturesPlaces) {
+    let imgWidth = totalWidth / columns - 24;
+    let imgHeight = totalHeight / records - 24;
+    for (var r = 0; r < records; r++) {
+        for (var c = 0; c < columns; c++) {
+            $("#grid").append(`<div class="card" id="c-${r}-${c}"></div>`);
+
+            let elem = $("#c" + "-" + r + "-" + c);
+            elem.css("width", "" + Math.floor(imgWidth));
+            elem.css("height", "" + Math.floor(imgHeight));
+            elem.css("float", "left");
+            elem.append(`<div class = "imagePlaceHolder front">?</div>`);
+            elem.append(`<div class = "imagePlace back"><img src = "images/img${picturesPlaces[r][c]}.jpg" width="${imgWidth}" height="${imgHeight}"/></div>`);
+            elem.css("fontSize", Math.floor(0.6 * imgHeight));
+            // elem.children(".imagePlaceHolder").css("line-height", Math.floor(imgHeight));
+            elem.flip({trigger: 'manual'});
+            elem.click(function () {
+                cardOnClick(this, picturesPlaces);
+            });
+        }
+        $("#grid").append(`<div style="clear: left"></div>`);
+    }
+}
+
+function startGame() {
+    boxesResize();
+
+    chosen = choosePictures(columns*records/2, records, columns);
+
+    var pict = placePictures(chosen, records, columns);
+
+    generateGame(pict);
+
+    $("#won").css("display", "none");
+    $("#menu-container").css("display", "none");
+    $("#grid").css("display", "block");
+}
+
+function endGame() {
+    $("#wynik").append(clickCount);
+    $("#grid").css("display", "none");
+    $("#menu-container").css("display", "none");
+    $("#won").css("display", "block");
+}
+
 function cardOnClick(trig, picturesPlaces) {
     var id = "#" + $(trig).attr('id');
     var spltId = id.split('-');
@@ -87,6 +171,12 @@ function cardOnClick(trig, picturesPlaces) {
                 guessed.push(firstShowed);
                 firstShowed = "";
                 guessedCount++;
+                if (guessedCount == records * columns / 2) {
+                    blocked = true;
+                    setTimeout(function () {
+                        endGame();
+                    }, 1000);
+                }
             } else {
                 //PUDLO
                 blocked = true;
@@ -101,44 +191,33 @@ function cardOnClick(trig, picturesPlaces) {
     }
 }
 
-function generateGame(records, columns, totalWidth, totalHeight, picturesPlaces) {
-    imgWidth = totalWidth / columns - 24;
-    imgHeight = totalHeight / records - 24;
-    for (var r = 0; r < records; r++) {
-        for (var c = 0; c < columns; c++) {
-            $("#grid").append(`<div class="card" id="c-${r}-${c}"></div>`);
-
-            let elem = $("#c" + "-" + r + "-" + c);
-            elem.css("width", "" + Math.floor(imgWidth));
-            elem.css("height", "" + Math.floor(imgHeight));
-            elem.css("float", "left");
-            elem.append(`<div class = "imagePlaceHolder front">?</div>`);
-            elem.append(`<div class = "imagePlace back"><img src = "images/img${picturesPlaces[r][c]}.jpg" width="${imgWidth}" height="${imgHeight}"/></div>`);
-            // $("#c" + "-" + r + "-" + c).flip();
-            $("#c-" + r + "-" + c).flip({trigger: 'manual'});
-            $("#c-" + r + "-" + c).click(function () {
-                cardOnClick(this, picturesPlaces);
-            });
-        }
-        $("#grid").append(`<div style="clear: left"></div>`);
-    }
-}
-
 $(document).ready(function () {
-    $("#menu-container").css("display", "none");
-    $("#grid").css("display", "block");
+    boxesResize();
+    $("#won").css("display", "none");
+    $("#grid").css("display", "none");
+    $("#menu-container").css("display", "block");
 
-    let totalWidth = 1500;
-    let totalHeight = 900;
-    let columns = 4;
-    let records = 2;
+    $('#op1').click(function () {
+        records = 2;
+        columns = 4;
+        startGame();
+    });
 
-    chosen = choosePictures(columns*records/2, records, columns);
+    $('#op2').click(function () {
+        records = 3;
+        columns = 6;
+        startGame();
+    });
 
-    var pict = placePictures(chosen, records, columns);
+    $('#op3').click(function () {
+        records = 4;
+        columns = 8;
+        startGame();
+    });
 
-    generateGame(records, columns, totalWidth, totalHeight, pict);
-
+    $('#regame').click(function () {
+        window.location.reload();
+    });
 });
 
 
